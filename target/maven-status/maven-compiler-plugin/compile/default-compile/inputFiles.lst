@@ -1,0 +1,16 @@
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\entity\ExpenseClaim.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\mapper\ApprovalRecordMapper.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\mapper\ExpenseClaimMapper.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\controller\ExpenseClaimController.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\service\AIService.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\AiApprovalSystemApplication.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\entity\ApprovalRecord.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\service\ExpenseClaimService.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\listener\AICheckTaskListener.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\listener\FinanceApprovalTaskListener.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\mapper\UserMapper.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\entity\ExpenseItem.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\entity\User.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\listener\ManagerApprovalTaskListener.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\mapper\ExpenseItemMapper.java
+F:\project\tmccloud-base\aiFlowable\src\main\java\com\tmccloud\aiapproval\config\AIConfig.java
