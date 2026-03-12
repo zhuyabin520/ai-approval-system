@@ -1,0 +1,12 @@
+# Java 编译产物
+target/
+*.class
+.qoder
+.trae
+# Node.js
+node_modules/
+package-lock.json
+
+# IDE 文件
+.idea/
+*.iml
