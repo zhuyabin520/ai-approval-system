@@ -1,5 +1,9 @@
 package com.tmccloud.aiapproval.controller;
 
+import com.tmccloud.aiapproval.entity.AISettings;
+import com.tmccloud.aiapproval.entity.User;
+import com.tmccloud.aiapproval.service.AISettingsService;
+import com.tmccloud.aiapproval.service.UserService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,12 @@ public class SystemController {
     
     @Autowired
     private RepositoryService repositoryService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private AISettingsService aiSettingsService;
     
     /**
      * 获取系统设置
@@ -42,13 +52,16 @@ public class SystemController {
      * 获取 AI 设置
      */
     @GetMapping("/ai-settings")
-    public Map<String, Object> getAISettings() {
-        Map<String, Object> settings = new java.util.HashMap<>();
-        settings.put("modelName", "qwen3.5-flash");
-        settings.put("apiKey", "");
-        settings.put("baseUrl", "https://dashscope.aliyuncs.com/compatible-mode/v1");
-        settings.put("temperature", 0.7);
-        settings.put("maxTokens", 2048);
+    public AISettings getAISettings() {
+        AISettings settings = aiSettingsService.getCurrentSettings();
+        if (settings == null) {
+            // 如果没有设置，返回默认值
+            settings = new AISettings();
+            settings.setModelName("qwen3.5-flash");
+            settings.setBaseUrl("https://dashscope.aliyuncs.com/compatible-mode/v1");
+            settings.setTemperature(new java.math.BigDecimal(0.7));
+            settings.setMaxTokens(2048);
+        }
         return settings;
     }
     
@@ -56,9 +69,42 @@ public class SystemController {
      * 更新 AI 设置
      */
     @PutMapping("/ai-settings")
-    public void updateAISettings(@RequestBody Map<String, Object> settings) {
-        // 这里可以保存设置到数据库
-        System.out.println("更新 AI 设置: " + settings);
+    public void updateAISettings(@RequestBody AISettings settings) {
+        aiSettingsService.saveSettings(settings);
+        // 启用该设置
+        aiSettingsService.enableSettings(settings.getId());
+    }
+    
+    /**
+     * 获取用户列表
+     */
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        return userService.getAllUsers();
+    }
+    
+    /**
+     * 获取用户详情
+     */
+    @GetMapping("/users/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+    
+    /**
+     * 保存用户
+     */
+    @PostMapping("/users")
+    public void saveUser(@RequestBody User user) {
+        userService.saveUser(user);
+    }
+    
+    /**
+     * 删除用户
+     */
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
     
     /**

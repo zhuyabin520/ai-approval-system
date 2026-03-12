@@ -1,6 +1,7 @@
 package com.tmccloud.aiapproval.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tmccloud.aiapproval.entity.ExpenseClaim;
 import com.tmccloud.aiapproval.entity.ExpenseItem;
 import com.tmccloud.aiapproval.entity.ApprovalRecord;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class ExpenseClaimService {
@@ -180,5 +182,87 @@ public class ExpenseClaimService {
      */
     public List<ExpenseClaim> getAllExpenseClaims() {
         return expenseClaimMapper.selectList(null);
+    }
+    
+    /**
+     * 获取报销单列表（支持筛选和分页）
+     * @param status 状态
+     * @param userId 用户ID
+     * @param claimId 报销单号
+     * @param page 页码
+     * @param size 每页大小
+     * @return 报销单列表
+     */
+    public List<ExpenseClaim> getExpenseClaims(String status, Long userId, String claimId, Integer page, Integer size) {
+        QueryWrapper<ExpenseClaim> wrapper = buildExpenseClaimQueryWrapper(status, userId, claimId);
+        
+        // 分页查询
+        Page<ExpenseClaim> pageObj = new Page<>(page, size);
+        Page<ExpenseClaim> result = expenseClaimMapper.selectPage(pageObj, wrapper);
+        
+        return result.getRecords();
+    }
+    
+    /**
+     * 获取报销单总数（支持筛选）
+     * @param status 状态
+     * @param userId 用户ID
+     * @param claimId 报销单号
+     * @return 总数
+     */
+    public long getExpenseClaimsCount(String status, Long userId, String claimId) {
+        QueryWrapper<ExpenseClaim> wrapper = buildExpenseClaimQueryWrapper(status, userId, claimId);
+        return expenseClaimMapper.selectCount(wrapper);
+    }
+    
+    /**
+     * 构建报销单查询条件
+     * @param status 状态
+     * @param userId 用户ID
+     * @param claimId 报销单号
+     * @return 查询条件
+     */
+    private QueryWrapper<ExpenseClaim> buildExpenseClaimQueryWrapper(String status, Long userId, String claimId) {
+        QueryWrapper<ExpenseClaim> wrapper = new QueryWrapper<>();
+        
+        if (status != null && !status.isEmpty()) {
+            wrapper.eq("status", status);
+        }
+        
+        if (userId != null) {
+            wrapper.eq("user_id", userId);
+        }
+        
+        if (claimId != null && !claimId.isEmpty()) {
+            wrapper.like("id", claimId);
+        }
+        
+        // 按创建时间倒序
+        wrapper.orderByDesc("created_at");
+        
+        return wrapper;
+    }
+    
+    /**
+     * 删除报销单
+     * @param id 报销单ID
+     * @return 删除是否成功
+     */
+    @Transactional
+    public boolean deleteExpenseClaim(Long id) {
+        // 删除关联的报销明细项
+        QueryWrapper<ExpenseItem> itemWrapper = new QueryWrapper<>();
+        itemWrapper.eq("claim_id", id);
+        expenseItemMapper.delete(itemWrapper);
+        
+        // 删除关联的审批记录
+        QueryWrapper<ApprovalRecord> recordWrapper = new QueryWrapper<>();
+        recordWrapper.eq("claim_id", id);
+        approvalRecordMapper.delete(recordWrapper);
+        
+        // 删除报销单
+        int result = expenseClaimMapper.deleteById(id);
+        
+        return result > 0;
     }
 }

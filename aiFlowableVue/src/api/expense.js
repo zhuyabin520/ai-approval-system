@@ -51,10 +51,7 @@ api.interceptors.response.use(
 // 报销单相关 API
 export const expenseApi = {
   // 获取报销单列表
-  getExpenseClaims: (status = '', userId = null) => {
-    const params = {}
-    if (status) params.status = status
-    if (userId) params.userId = userId
+  getExpenseClaims: (params = {}) => {
     return api.get('/expense/list', { params })
   },
   
@@ -66,6 +63,11 @@ export const expenseApi = {
   // 获取报销单详情
   getExpenseClaimDetail: (id) => {
     return api.get(`/expense/detail/${id}`)
+  },
+  
+  // 删除报销单
+  deleteExpenseClaim: (id) => {
+    return api.delete(`/expense/${id}`)
   },
   
   // 审批报销单
@@ -119,6 +121,57 @@ export const expenseApi = {
         'Content-Type': 'multipart/form-data'
       }
     })
+  },
+  
+  // 用户相关 API
+  getUsers: () => {
+    return api.get('/system/users')
+  },
+  
+  getUser: (id) => {
+    return api.get(`/system/users/${id}`)
+  },
+  
+  saveUser: (user) => {
+    return api.post('/system/users', user)
+  },
+  
+  deleteUser: (id) => {
+    return api.delete(`/system/users/${id}`)
+  },
+  
+  // 角色权限相关 API
+  getRolePermissions: () => {
+    return api.get('/permission/role-permissions')
+  },
+  
+  getPermissionsByRole: (roleId) => {
+    return api.get(`/permission/role-permissions/${roleId}`)
+  },
+  
+  saveRolePermission: (permission) => {
+    return api.post('/permission/role-permissions', permission)
+  },
+  
+  deleteRolePermission: (id) => {
+    return api.delete(`/permission/role-permissions/${id}`)
+  },
+  
+  // 流程设置相关 API
+  getProcessSettings: () => {
+    return api.get('/permission/process-settings')
+  },
+  
+  getStepsByProcess: (processId) => {
+    return api.get(`/permission/process-settings/${processId}`)
+  },
+  
+  saveProcessSetting: (setting) => {
+    return api.post('/permission/process-settings', setting)
+  },
+  
+  deleteProcessSetting: (id) => {
+    return api.delete(`/permission/process-settings/${id}`)
   }
 }
 

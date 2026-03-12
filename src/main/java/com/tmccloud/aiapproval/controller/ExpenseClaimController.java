@@ -8,6 +8,7 @@ import org.flowable.task.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,16 +23,25 @@ public class ExpenseClaimController {
      * 获取报销单列表
      * @param status 状态（可选）
      * @param userId 用户 ID（可选）
-     * @return 报销单列表
+     * @param claimId 报销单号（可选）
+     * @param page 页码（可选，默认1）
+     * @param size 每页大小（可选，默认10）
+     * @return 报销单列表和总数
      */
     @GetMapping("/list")
-    public List<ExpenseClaim> getExpenseClaims(
+    public Map<String, Object> getExpenseClaims(
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) Long userId) {
-        if (userId != null) {
-            return expenseClaimService.getExpenseClaimsByUserId(userId);
-        }
-        return expenseClaimService.getAllExpenseClaims();
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String claimId,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
+        List<ExpenseClaim> claims = expenseClaimService.getExpenseClaims(status, userId, claimId, page, size);
+        long total = expenseClaimService.getExpenseClaimsCount(status, userId, claimId);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("claims", claims);
+        result.put("total", total);
+        return result;
     }
     
     /**
@@ -127,5 +137,15 @@ public class ExpenseClaimController {
     @GetMapping("/approval-records/{claimId}")
     public List<ApprovalRecord> getApprovalRecords(@PathVariable Long claimId) {
         return expenseClaimService.getApprovalRecordsByClaimId(claimId);
+    }
+    
+    /**
+     * 删除报销单
+     * @param id 报销单ID
+     * @return 删除是否成功
+     */
+    @DeleteMapping("/{id}")
+    public boolean deleteExpenseClaim(@PathVariable Long id) {
+        return expenseClaimService.deleteExpenseClaim(id);
     }
 }
