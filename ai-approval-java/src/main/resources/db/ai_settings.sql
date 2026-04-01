@@ -14,5 +14,5 @@ CREATE TABLE IF NOT EXISTS `ai_settings` (
 
 -- 初始化默认AI设置
 INSERT INTO `ai_settings` (`model_name`, `api_key`, `base_url`, `temperature`, `max_tokens`, `timeout`, `enabled`) VALUES
-('qwen3.5-flash', 'sk-53fbaf58b9c14289841f576c586f76b9', 'https://dashscope.aliyuncs.com/compatible-mode/v1', 0.7, 2000, 60, 1)
+('qwen3.5-flash', 'xxx', 'https://dashscope.aliyuncs.com/compatible-mode/v1', 0.7, 2000, 60, 1)
 ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP;

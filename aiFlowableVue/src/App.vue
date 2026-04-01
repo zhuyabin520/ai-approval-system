@@ -62,27 +62,41 @@
             <el-menu-item index="3-1">流程配置</el-menu-item>
             <el-menu-item index="3-2">AI设置</el-menu-item>
           </el-sub-menu>
+          <el-sub-menu index="4">
+            <template #title>
+              <el-icon><Document /></el-icon>
+              <span>AI知识库</span>
+            </template>
+            <el-menu-item index="4-1">知识库管理</el-menu-item>
+            <el-menu-item index="4-2">智能问答</el-menu-item>
+            <el-menu-item index="4-3">SQL查询助手</el-menu-item>
+          </el-sub-menu>
         </el-menu>
       </aside>
       
       <!-- 右侧内容 -->
       <main class="app-content">
-        <div class="content-header">
-          <h2 class="page-title">{{ getPageTitle() }}</h2>
-          <div class="header-actions">
-            <el-button v-if="activeMenu === '1-1'" type="primary" @click="submitExpense" :loading="loading">
-              <el-icon><Plus /></el-icon> 提交报销
-            </el-button>
-            <el-button v-if="activeMenu === '2-1' && !loading" type="primary" @click="handleAddUser">
-              <el-icon><Plus /></el-icon> 添加用户
-            </el-button>
-            <el-button v-if="(activeMenu === '3-1' || activeMenu === '3-2') && !loading" type="primary" @click="saveSettings">
-              <el-icon><Plus /></el-icon> 保存设置
-            </el-button>
-          </div>
-        </div>
+        <!-- AI知识库组件 -->
+        <component v-if="currentAIComponent" :is="currentAIComponent"></component>
         
-        <el-card class="content-card">
+        <!-- 原有内容 -->
+        <div v-else>
+          <div class="content-header">
+            <h2 class="page-title">{{ getPageTitle() }}</h2>
+            <div class="header-actions">
+              <el-button v-if="activeMenu === '1-1'" type="primary" @click="submitExpense" :loading="loading">
+                <el-icon><Plus /></el-icon> 提交报销
+              </el-button>
+              <el-button v-if="activeMenu === '2-1' && !loading" type="primary" @click="handleAddUser">
+                <el-icon><Plus /></el-icon> 添加用户
+              </el-button>
+              <el-button v-if="(activeMenu === '3-1' || activeMenu === '3-2') && !loading" type="primary" @click="saveSettings">
+                <el-icon><Plus /></el-icon> 保存设置
+              </el-button>
+            </div>
+          </div>
+          
+          <el-card class="content-card">
             
             <!-- 搜索表单 -->
             <el-form v-if="activeMenu !== '1-1' && !isSystemSettingPage && activeMenu !== '2-1'" :inline="true" :model="searchForm" class="search-form" label-position="left">
@@ -300,6 +314,7 @@
               />
             </div>
           </el-card>
+        </div>
         </main>
       </div>
     
@@ -419,6 +434,9 @@ import {
   ArrowDown 
 } from '@element-plus/icons-vue'
 import { expenseApi } from './api/expense'
+import KnowledgeBase from './components/KnowledgeBase.vue'
+import RAGQuery from './components/RAGQuery.vue'
+import TextToSQL from './components/TextToSQL.vue'
 
 export default {
   name: 'App',
@@ -435,11 +453,15 @@ export default {
     Check,
     Close,
     Upload,
-    ArrowDown
+    ArrowDown,
+    KnowledgeBase,
+    RAGQuery,
+    TextToSQL
   },
   data() {
     return {
       activeMenu: '1-2',
+      currentAIComponent: null,
       searchForm: {
         claimId: '',
         status: ''
@@ -543,6 +565,15 @@ export default {
       } else if (key === '3-2') {
         // AI 设置页面
         this.loadAISettings()
+      } else if (key === '4-1') {
+        // 知识库管理页面
+        this.currentAIComponent = 'KnowledgeBase'
+      } else if (key === '4-2') {
+        // 智能问答页面
+        this.currentAIComponent = 'RAGQuery'
+      } else if (key === '4-3') {
+        // SQL查询助手页面
+        this.currentAIComponent = 'TextToSQL'
       }
     },
     // 加载报销单列表
